@@ -14,6 +14,12 @@ function initMap() {
       position: center,
       draggable: true
   });
+  carregarMapa();
+  marker = new google.maps.Marker({
+    map: map,
+    position: center,
+    draggable: true
+  });
 
   map.addListener("click", (evt) => {
     addMarker(evt);
@@ -54,3 +60,21 @@ function salvar(){
     .catch(error => alert('Falha ao salvar!'));    
 
 }
+async function carregarMapa() {
+  fetch('http://localhost:3000/pontomapa').
+  then(
+    (resultado) => resultado.json()).
+  then(
+    (json) => {
+      json.map((geometria) => {
+        marker = new google.maps.Marker({
+          map: map,
+          position: {lat: +geometria.lat, lng: +geometria.lng},
+          draggable: false,
+        });
+      })
+  })
+}
+
+
+

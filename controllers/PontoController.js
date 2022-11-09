@@ -1,6 +1,7 @@
 const req = require('express/lib/request');
 const { status } = require('express/lib/response');
 const res = require('express/lib/response');
+const { GEOMETRY } = require('sequelize');
 const Ponto = require('../models/ponto');
 
 const addPonto = async (request, response) =>{
@@ -40,4 +41,26 @@ async function sincronizar(request, response) {
     response.status(200).send('Sincronizado');
 }
 
-module.exports = {addPonto, sincronizar, listarPontos};
+const getPontos = (request, response) =>{
+
+    
+    const query = `SELECT ST_AsText(geometria) as geometria FROM pontos`
+
+Ponto.query(Ponto,(error, results) => {
+            if(error){
+                response.status(400).send(error);
+                console.log(error);
+                return; 
+            }
+            let res = results.rows.map((row) => {
+                const latLong = row.geometria.substring(6, row.geometria.length - 1).split(' ');
+                const point = {
+                    lat: latLong[0],
+                    lng: latLong[1],
+                }
+                return point
+            })
+            response.status(200).json(res)
+        })
+    };
+module.exports = {addPonto, sincronizar, listarPontos, getPontos};
