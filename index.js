@@ -26,15 +26,13 @@ app.get('/', pontoController.sincronizar);
 
 app.post('/pontos', pontoController.addPonto);
 
-app.get('/router/lista', function(req, res){
-    Ponto.findAll({
-        order: [['nome', 'DESC']]
-    })(function(err, pontos){
-        if (err){
-            return next(err);
-        };
-        res.render("lista", {pontos: pontos});
-    });
+app.get('/router/lista', async function(req, res){
+    try {
+        const pontos = await Ponto.findAll();
+      res.render('lista', {pontos: pontos});
+    }catch{
+        return next(err);
+    }
 });
 
 app.listen(port, ()=>{
