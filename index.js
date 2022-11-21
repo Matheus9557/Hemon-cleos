@@ -34,7 +34,6 @@ app.get('/router/lista', async function(req, res){
         return next(err);
     }
 });
-app.get('/pontomapa', pontoController.getPontos);
 
 app.listen(port, ()=>{
     console.log(`App running on port ${port}.`);
